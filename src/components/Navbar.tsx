@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Stethoscope, Users, BarChart3, Package, HeartPulse, Globe, UserCheck, WifiOff } from 'lucide-react';
+import { Stethoscope, Users, BarChart3, Package, HeartPulse, Globe, UserCheck, WifiOff, ShieldCheck } from 'lucide-react';
 import { SupportedLanguage, TRANSLATIONS } from '@/lib/i18n/translations';
 
 export default function Navbar() {
@@ -19,6 +19,7 @@ export default function Navbar() {
     { label: t.patientsTitle, href: '/patients', icon: Users },
     { label: t.analyticsTitle, href: '/analytics', icon: BarChart3 },
     { label: t.suppliesTitle, href: '/supplies', icon: Package },
+    { label: 'Web Admin', href: '/admin', icon: ShieldCheck },
   ];
 
   return (

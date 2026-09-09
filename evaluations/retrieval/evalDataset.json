@@ -1,0 +1,28 @@
+[
+  {
+    "query": "What is the pre-referral medication for severe pre-eclampsia in pregnant mother with BP 165/112?",
+    "expectedGuideline": "Ethiopian National Antenatal Care & Maternal Management Guidelines",
+    "expectedSection": "4.2.1",
+    "expectedPage": 58,
+    "expectedSafetyTier": "RED",
+    "expectedMedication": "Magnesium Sulfate 50% Inj",
+    "mustAbstain": false
+  },
+  {
+    "query": "Child 3 years old with positive mRDT and fever 39.2C",
+    "expectedGuideline": "Ethiopian Integrated Management of Newborn and Childhood Illness (IMCI)",
+    "expectedSection": "3.1",
+    "expectedPage": 34,
+    "expectedSafetyTier": "YELLOW",
+    "expectedMedication": "Coartem",
+    "mustAbstain": false
+  },
+  {
+    "query": "Unclear input without symptoms or vitals",
+    "expectedGuideline": null,
+    "expectedSection": null,
+    "expectedPage": null,
+    "expectedSafetyTier": "GREEN",
+    "mustAbstain": true
+  }
+]
