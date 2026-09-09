@@ -1,0 +1,38 @@
+[
+  {
+    "guidelineId": "ETH-MOH-ANC-2026",
+    "title": "Ethiopian National Antenatal Care & Maternal Management Guidelines",
+    "publisher": "Ethiopian Ministry of Health (MoH)",
+    "jurisdiction": "Ethiopia",
+    "version": "2026.1",
+    "status": "APPROVED",
+    "targetPrograms": ["Antenatal Care", "Maternal Danger Signs"],
+    "fhirPlanDefinitionRef": "PlanDefinition/eth-anc-v2026",
+    "effectiveDate": "2026-01-01",
+    "reviewDate": "2027-01-01"
+  },
+  {
+    "guidelineId": "ETH-MOH-IMCI-2025",
+    "title": "Ethiopian Integrated Management of Newborn and Childhood Illness (IMCI)",
+    "publisher": "Ethiopian MoH & EPHI",
+    "jurisdiction": "Ethiopia",
+    "version": "2025.2",
+    "status": "APPROVED",
+    "targetPrograms": ["Child Health", "Immunization"],
+    "fhirPlanDefinitionRef": "PlanDefinition/eth-imci-v2025",
+    "effectiveDate": "2025-06-01",
+    "reviewDate": "2026-06-01"
+  },
+  {
+    "guidelineId": "WHO-SMART-ANC-2024",
+    "title": "WHO SMART Guidelines Digital Adaptation Kit for Antenatal Care",
+    "publisher": "World Health Organization (WHO)",
+    "jurisdiction": "Global / WHO",
+    "version": "2024.1",
+    "status": "APPROVED",
+    "targetPrograms": ["Antenatal Care"],
+    "fhirPlanDefinitionRef": "PlanDefinition/who-anc-dak",
+    "effectiveDate": "2024-03-01",
+    "reviewDate": "2026-03-01"
+  }
+]
