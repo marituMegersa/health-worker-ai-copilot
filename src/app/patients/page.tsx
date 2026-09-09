@@ -7,13 +7,12 @@ import {
   Search, 
   Filter, 
   AlertTriangle, 
-  CheckCircle2, 
   Calendar, 
   MapPin, 
   FileText,
   Heart,
-  PlusCircle,
-  X
+  X,
+  Database
 } from 'lucide-react';
 import { PatientRecord, ConsultationRecord } from '@/lib/db';
 
@@ -25,14 +24,14 @@ export default function PatientsPage() {
   const [showModal, setShowModal] = useState(false);
 
   const [newPatient, setNewPatient] = useState({
-    name: '',
-    age: 2,
+    name: 'Tigist Alemu',
+    age: 25,
     gender: 'Female',
-    villageDistrict: 'Kagoro Health Center - Sector A',
-    contactNumber: '+254 700 123 456',
-    muacCm: 11.5,
-    isHighRisk: false,
-    notes: 'Routine intake screening'
+    villageDistrict: 'Oromia Region - Kagoro Woreda, Kebele 02',
+    contactNumber: '+251 911 234 567',
+    muacCm: 22.0,
+    isHighRisk: true,
+    notes: 'ANC 28 Weeks - Monitored for pre-eclampsia warning signs'
   });
 
   const fetchData = async () => {
@@ -59,22 +58,12 @@ export default function PatientsPage() {
       const res = await fetch('/api/patients', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newPatient)
+        body: JSON.stringify({ ...newPatient, patientId: `eCHIS-ETH-${Math.floor(1000 + Math.random() * 9000)}` })
       });
       const data = await res.json();
       if (data.success) {
         setShowModal(false);
         fetchData();
-        setNewPatient({
-          name: '',
-          age: 2,
-          gender: 'Female',
-          villageDistrict: 'Kagoro Health Center - Sector A',
-          contactNumber: '',
-          muacCm: 12.0,
-          isHighRisk: false,
-          notes: ''
-        });
       }
     } catch (err) {
       console.error(err);
@@ -92,12 +81,15 @@ export default function PatientsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
         <div>
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-teal-50 text-teal-700 text-xs font-bold border border-teal-200 mb-1">
+            <Database className="w-3.5 h-3.5" /> FHIR R5 / eCHIS Interoperable Schema
+          </div>
           <h1 className="text-2xl font-black text-slate-900 flex items-center gap-2">
             <Users className="w-7 h-7 text-teal-600" />
-            Patient Registry & Digital Intake
+            Ethiopian eCHIS Patient Registry
           </h1>
           <p className="text-slate-600 text-sm mt-1">
-            Community health worker patient records, MUAC malnutrition tracking, and historical consultations.
+            Health Extension Worker (HEW) patient records, ANC tracking, and local encrypted synchronization queue.
           </p>
         </div>
 
@@ -106,7 +98,7 @@ export default function PatientsPage() {
           className="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-500 text-white font-bold px-4 py-2.5 rounded-lg shadow-sm transition-all text-sm"
         >
           <UserPlus className="w-4 h-4" />
-          Register New Patient
+          Register Patient in eCHIS
         </button>
       </div>
 
@@ -116,7 +108,7 @@ export default function PatientsPage() {
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
           <input
             type="text"
-            placeholder="Search by patient name or ID..."
+            placeholder="Search by name, eCHIS ID, or Woreda..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-teal-500 focus:outline-none"
@@ -152,7 +144,7 @@ export default function PatientsPage() {
             )}
 
             <div>
-              <span className="text-xs font-bold text-teal-600 block">{patient.patientId}</span>
+              <span className="text-xs font-bold text-teal-600 font-mono block">{patient.patientId}</span>
               <h3 className="font-extrabold text-lg text-slate-900">{patient.name}</h3>
               <p className="text-xs text-slate-500">{patient.age} yrs • {patient.gender}</p>
             </div>
@@ -170,7 +162,7 @@ export default function PatientsPage() {
                 <div className="flex items-center gap-2 font-semibold">
                   <Heart className="w-3.5 h-3.5 text-rose-500" />
                   <span className={patient.muacCm < 11.5 ? 'text-rose-600 font-bold' : 'text-slate-700'}>
-                    MUAC: {patient.muacCm} cm {patient.muacCm < 11.5 ? '(Severe Acute Malnutrition)' : ''}
+                    MUAC: {patient.muacCm} cm {patient.muacCm < 11.5 ? '(SAM Alert)' : ''}
                   </span>
                 </div>
               )}
@@ -183,53 +175,6 @@ export default function PatientsPage() {
             )}
           </div>
         ))}
-      </div>
-
-      {/* Consultation History Table */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <FileText className="w-5 h-5 text-teal-600" />
-          Recent Clinical Consultations Log
-        </h2>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="bg-slate-100 text-slate-700 border-b border-slate-200">
-                <th className="p-3 font-bold">Date & Time</th>
-                <th className="p-3 font-bold">Patient</th>
-                <th className="p-3 font-bold">Chief Complaint</th>
-                <th className="p-3 font-bold">Triage Risk</th>
-                <th className="p-3 font-bold">Action Taken</th>
-                <th className="p-3 font-bold">Location</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {consultations.map(c => (
-                <tr key={c.id} className="hover:bg-slate-50">
-                  <td className="p-3 whitespace-nowrap text-slate-500 font-mono">{c.date}</td>
-                  <td className="p-3 font-bold text-slate-900">{c.patientName}</td>
-                  <td className="p-3 text-slate-700 max-w-xs truncate">{c.chiefComplaint}</td>
-                  <td className="p-3 whitespace-nowrap">
-                    <span
-                      className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
-                        c.triageRisk.includes('RED')
-                          ? 'bg-rose-100 text-rose-700'
-                          : c.triageRisk.includes('YELLOW')
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-emerald-100 text-emerald-700'
-                      }`}
-                    >
-                      {c.triageRisk.split(' ')[0]}
-                    </span>
-                  </td>
-                  <td className="p-3 text-slate-700 max-w-xs">{c.actionTaken[0]}</td>
-                  <td className="p-3 text-slate-500">{c.locationDistrict}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       </div>
 
       {/* New Patient Registration Modal */}
@@ -245,7 +190,7 @@ export default function PatientsPage() {
 
             <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
               <UserPlus className="w-5 h-5 text-teal-600" />
-              Register New Patient
+              Register Patient in eCHIS System
             </h2>
 
             <form onSubmit={handleCreatePatient} className="space-y-4">
@@ -257,7 +202,6 @@ export default function PatientsPage() {
                   value={newPatient.name}
                   onChange={e => setNewPatient({ ...newPatient, name: e.target.value })}
                   className="w-full text-sm p-2 rounded-lg border border-slate-300"
-                  placeholder="e.g. Samuel Adewale"
                 />
               </div>
 
@@ -287,22 +231,11 @@ export default function PatientsPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Village / District Clinic</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Woreda / Kebele Health Post</label>
                 <input
                   type="text"
                   value={newPatient.villageDistrict}
                   onChange={e => setNewPatient({ ...newPatient, villageDistrict: e.target.value })}
-                  className="w-full text-sm p-2 rounded-lg border border-slate-300"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">MUAC Measurement (cm)</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  value={newPatient.muacCm}
-                  onChange={e => setNewPatient({ ...newPatient, muacCm: Number(e.target.value) })}
                   className="w-full text-sm p-2 rounded-lg border border-slate-300"
                 />
               </div>
@@ -316,7 +249,7 @@ export default function PatientsPage() {
                   className="rounded text-teal-600 focus:ring-teal-500"
                 />
                 <label htmlFor="highRisk" className="text-xs font-semibold text-slate-800">
-                  Flag as High-Risk Patient (SAM / ANC Warning)
+                  Flag as High-Risk Case (ANC / SAM Warning)
                 </label>
               </div>
 
@@ -342,7 +275,7 @@ export default function PatientsPage() {
                   type="submit"
                   className="px-4 py-2 text-xs font-bold text-white bg-teal-600 hover:bg-teal-500 rounded-lg shadow-sm"
                 >
-                  Save Patient Record
+                  Save FHIR Patient Record
                 </button>
               </div>
             </form>

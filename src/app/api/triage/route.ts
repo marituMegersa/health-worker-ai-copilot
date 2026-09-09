@@ -1,43 +1,38 @@
 import { NextResponse } from 'next/server';
-import { processClinicalTriage, PatientIntakeData } from '@/lib/ai/copilot';
-import { MOCK_CONSULTATIONS, ConsultationRecord } from '@/lib/db';
+import { processEthiopianClinicalCopilot } from '@/lib/ai/copilot';
+import { CDSEngineInput } from '@/lib/clinical-rules/cdsEngine';
 
 export async function POST(req: Request) {
   try {
-    const intake: PatientIntakeData = await req.json();
-    
-    // Process clinical reasoning with AI copilot
-    const result = await processClinicalTriage(intake);
+    const body = await req.json();
+    const lang = body.language || 'en';
 
-    // Record consultation in mock database
-    const newConsultation: ConsultationRecord = {
-      id: `C${Date.now().toString().slice(-4)}`,
-      patientId: `PAT-${Math.floor(100 + Math.random() * 900)}`,
-      patientName: intake.patientName,
-      healthWorkerName: 'Health Worker (Active Session)',
-      date: new Date().toISOString().replace('T', ' ').slice(0, 16),
-      chiefComplaint: intake.chiefComplaint,
-      symptoms: intake.symptoms,
+    const input: CDSEngineInput = {
+      patientId: body.patientId || `PAT-ETH-${Math.floor(100 + Math.random() * 900)}`,
+      ageYears: Number(body.ageYears || 2),
+      gender: (body.gender?.toLowerCase() === 'male' ? 'male' : 'female'),
+      isPregnant: body.isPregnant || false,
+      gestationalAgeWeeks: body.gestationalAgeWeeks ? Number(body.gestationalAgeWeeks) : undefined,
       vitals: {
-        tempC: intake.temperatureC,
-        bpSystolic: intake.systolicBp,
-        bpDiastolic: intake.diastolicBp,
-        heartRate: intake.heartRateBpm,
-        muacCm: intake.muacCm
+        systolicBp: body.systolicBp ? Number(body.systolicBp) : undefined,
+        diastolicBp: body.diastolicBp ? Number(body.diastolicBp) : undefined,
+        temperatureC: body.temperatureC ? Number(body.temperatureC) : undefined,
+        muacCm: body.muacCm ? Number(body.muacCm) : undefined
       },
-      triageRisk: result.riskLevel,
-      protocolUsed: result.matchedProtocol?.name || 'General Triage',
-      actionTaken: result.suggestedActions,
-      medicationsPrescribed: result.recommendedMedications.map(m => ({ name: m.name, dosage: m.dosage })),
-      locationDistrict: intake.locationDistrict || 'Kagoro District'
+      symptoms: body.symptoms || [],
+      dangerSigns: body.dangerSignsPresent || [],
+      labResults: {
+        mRdt: body.mRdtResult || 'NOT_DONE',
+        proteinuriaDipstick: body.proteinuriaDipstick || 'NEGATIVE'
+      },
+      language: lang
     };
 
-    MOCK_CONSULTATIONS.unshift(newConsultation);
+    const assessment = await processEthiopianClinicalCopilot(input, lang);
 
     return NextResponse.json({
       success: true,
-      assessment: result,
-      consultationId: newConsultation.id
+      assessment
     });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
