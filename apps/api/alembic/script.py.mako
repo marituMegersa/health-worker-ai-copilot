@@ -1,10 +1,4 @@
-"""${message}
-
-Revision ID: ${up_revision}
-Revises: ${down_revision | repr, empty}
-Create Date: ${create_date}
-
-"""
+"""${message}"""
 from alembic import op
 import sqlalchemy as sa
 
