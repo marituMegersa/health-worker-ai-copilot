@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, String, DateTime, ForeignKey
 import datetime
 from app.db.base import Base
 
@@ -7,8 +7,6 @@ class Facility(Base):
 
     id = Column(String, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    organization_id = Column(String, ForeignKey("organizations.id"))
-    woreda = Column(String, nullable=False)
-    region = Column(String, nullable=False)
-    active = Column(Boolean, default=True)
+    facility_type = Column(String, nullable=False)
+    organization_id = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
