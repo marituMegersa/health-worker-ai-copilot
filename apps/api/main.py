@@ -1,3 +1,4 @@
+import uvicorn
 
 from app.db.base import Base
 from app.db.session import engine
@@ -39,3 +40,7 @@ def root_status():
 @app.get("/healthz")
 def healthcheck():
     return {"status": "OK", "uptime": "100%"}
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=False)
