@@ -12,4 +12,4 @@ class ClinicalTriageRecord(Base):
     gestational_age_weeks = Column(Float, nullable=True)
     systolic_bp = Column(Float, nullable=True)
     symptoms_json = Column(JSON, nullable=True)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow, index=True)
