@@ -19,13 +19,4 @@ async def evaluate_triage(req: ClinicalTriageEvalRequest, service: ClinicalTriag
 
 @router.get("/records")
 async def list_records(skip: int = Query(0, ge=0), limit: int = Query(50, le=100), service: ClinicalTriageService = Depends(get_service)):
-    records = await service.list_patient_records(skip=skip, limit=limit)
-    return [
-        {
-            "id": r.id,
-            "patient_id": r.patient_id,
-            "protocol_type": r.protocol_type,
-            "triage_category": r.triage_category,
-            "created_at": r.created_at
-        } for r in records
-    ]
+    return await service.list_patient_records(skip=skip, limit=limit)

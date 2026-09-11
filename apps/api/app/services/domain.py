@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List, Dict, Any
+from typing import List
 import uuid
 
 from app.models.domain import ClinicalTriageRecord
@@ -11,7 +11,6 @@ class ClinicalTriageService:
         self.repo = repo
 
     async def evaluate_patient_triage(self, req: ClinicalTriageEvalRequest) -> ClinicalTriageEvalResponse:
-        # Business logic & WHO SMART rules evaluation
         is_amber = req.systolic_bp >= 140 or any("headache" in s.lower() for s in req.symptoms)
         category = "AMBER" if is_amber else "GREEN"
         rec = "High Pre-Eclampsia risk. Administer MgSO4 IV." if is_amber else "Routine ANC care protocol."
