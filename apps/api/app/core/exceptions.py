@@ -1,16 +1,9 @@
-from fastapi import HTTPException, Request, status
-from fastapi.responses import JSONResponse
-import logging
+from fastapi import HTTPException, status
 
-logger = logging.getLogger("production_api")
+class NotFoundException(HTTPException):
+    def __init__(self, detail: str = "Resource not found"):
+        super().__init__(status_code=status.HTTP_404_NOT_FOUND, detail=detail)
 
-class ProductionException(HTTPException):
-    def __init__(self, detail: str, status_code: int = status.HTTP_400_BAD_REQUEST):
-        super().__init__(status_code=status_code, detail=detail)
-
-async def production_exception_handler(request: Request, exc: Exception):
-    logger.error(f"Unhandled Exception on {request.url}: {str(exc)}")
-    return JSONResponse(
-        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"detail": "An internal server error occurred. Please contact system administrator."}
-    )
+class BadRequestException(HTTPException):
+    def __init__(self, detail: str = "Bad request"):
+        super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail=detail)
