@@ -1,26 +1,18 @@
 from pydantic import BaseModel, Field
-from typing import List, Dict, Any, Optional
+from typing import List, Optional
 from datetime import datetime
 
-class ClinicalTriageRequest(BaseModel):
+class ClinicalTriageEvalRequest(BaseModel):
+    patient_id: str = Field(..., example="PAT-9842")
+    protocol_type: str = Field("ANC_VISIT_2", example="ANC_VISIT_2")
+    gestational_age_weeks: float = Field(..., ge=1, le=42, example=24.5)
+    systolic_bp: float = Field(..., ge=70, le=240, example=142.0)
+    symptoms: List[str] = Field(default_factory=list, example=["Severe headache", "Blurred vision"])
 
+class ClinicalTriageEvalResponse(BaseModel):
     patient_id: str
-    gestational_age_weeks: Optional[int] = None
-    systolic_bp: Optional[int] = None
-    diastolic_bp: Optional[int] = None
-    temperature_c: Optional[float] = None
-    muac_cm: Optional[float] = None
-    proteinuria: Optional[str] = "NEGATIVE"
-    m_rdt_result: Optional[str] = "NOT_DONE"
-    symptoms: List[str] = []
-
-
-class ClinicalTriageResponse(BaseModel):
-    id: str
-    status: str = "COMPLETED"
-    summary: str
-    confidence_score: float = 0.98
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
+    triage_category: str
+    recommendation: str
+    is_pre_eclampsia_risk: bool
+    evidence_citations: List[str]
+    evaluated_at: datetime = Field(default_factory=datetime.utcnow)
