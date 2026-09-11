@@ -1,82 +1,111 @@
-# Ethiopian Health Worker AI Copilot 🩺🇪🇹
+# Ethiopian Health Worker AI Copilot
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![FHIR R5](https://img.shields.io/badge/HL7_FHIR-R5-firebrick?style=for-the-badge)](https://hl7.org/fhir/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110.0-009688.svg?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-18-61DAFB.svg?style=flat&logo=react)](https://react.dev)
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB.svg?style=flat&logo=python)](https://python.org)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Offline-First, Multilingual, Evidence-Grounded Decision Support Platform for Ethiopian Health Workers**
+> **Offline-First AI Clinical Decision Support & WHO/MoH Guideline Assistant**
 
-Built for Health Extension Workers (HEWs), clinic nurses, midwives, and public health officers in alignment with **Ethiopian Ministry of Health (MoH) guidelines, EPHI protocols, and WHO SMART Guidelines**.
+An AI-powered clinical copilot designed for healthcare workers in low-resource settings. Enforces Ethiopian Ministry of Health (MoH) and World Health Organization (WHO) maternal/child triage protocols, pre-eclampsia risk assessment, and localized clinical guidance.
 
 ---
 
-## 📐 Clinical Architecture
+## 🏛️ Clean Architecture Overview
 
-```text
-Ethiopian MoH / WHO Guidelines
-               ↓
-  Structured Deterministic Rules (CQL / FHIR)
-               ↓
-    Patient Observations (FHIR)
-               ↓
-  Clinical Decision Support Evaluation
-               ↓
-  AI Explanation & RAG Retrieval (with Provenance Citations)
-               ↓
-   Health Extension Worker / Nurse
-               ↓
-   Human Clinical Decision Confirmation
+This repository is built following **Clean Layered Architecture** standards:
+
+```
+apps/api/app/
+├── api/          # Thin REST routers & Dependency Injection (deps.py)
+├── schemas/      # Pydantic v2 validation DTOs (Request / Response)
+├── models/       # SQLAlchemy 2.0 Async ORM models & Base declarative metadata
+├── repositories/ # Dedicated async database access queries ONLY
+├── services/     # Pure business logic, domain rules, & AI orchestrators
+├── core/         # Settings (pydantic-settings), Async Database, JWT Security, & Exceptions
+└── utils/        # Reusable helper utilities
 ```
 
 ---
 
-## 🌟 Key Features
+## ✨ Key Features
 
-- **WHO SMART Guidelines & MoH Alignment**: ANC Visits 1-4, Severe Pre-Eclampsia screening, Pediatric IMCI fever/malaria workflows.
-- **Tri-Tier Safety Framework**: Green (General Info RAG), Amber (Care Plan + Worker Confirmation), Red (Emergency Referral Alert).
-- **Multilingual Support**: English, Amharic (አማርኛ), and Afaan Oromo.
-- **Offline-First Storage**: Encrypted Room DB / SQLCipher cache with WorkManager sync queue.
-
----
-
-## 📂 Monorepo Structure
-
-```text
-health-worker-ai-copilot/
-├── apps/
-│   ├── api/                     # Python 3.12 FastAPI Backend Application
-│   │   ├── app/
-│   │   │   └── domain/clinical_triage/
-│   │   │       ├── models.py    # SQLAlchemy 2 ORM Models
-│   │   │       ├── schemas.py   # Pydantic v2 Schemas
-│   │   │       ├── service.py   # WHO/MoH Clinical Rules Service
-│   │   │       └── router.py    # FastAPI APIRouter Endpoints
-│   │   └── main.py
-│   └── web/                     # React 18 TypeScript Frontend Application
-│       ├── src/
-│       │   ├── components/      # UI Triage Components & Citation Inspector
-│       │   └── App.tsx
-├── docker-compose.yml
-└── README.md
-```
+- **Clinical Triage Engine**:  Automated pre-eclampsia risk assessment & ANC module guidance
+- **Offline Sync Protocol**:  Async SQLAlchemy persistence & Redis caching for offline resilience
+- **Multi-agent RAG Engine**:  LangGraph-orchestrated retrieval of WHO/MoH guidelines
+- **Interactive Dashboard**:  Modern React 18 TypeScript web frontend with dynamic triage forms
 
 ---
 
-## 🚀 Quick Start
+## 🛠️ Tech Stack
 
-### 1. Python FastAPI Backend (`apps/api`)
+- **Backend**: Python 3.12, FastAPI 0.110+, Async SQLAlchemy 2.0+, Pydantic v2
+- **Frontend**: React 18, TypeScript, Tailwind CSS, Lucide Icons
+- **Database & Cache**: PostgreSQL (Asyncpg), Redis, Elasticsearch
+- **AI & RAG**: vLLM / Ollama, LangChain, LangGraph State Graphs
+- **DevOps & Testing**: Docker, Docker Compose, Pytest, Pytest-Asyncio
+
+---
+
+## 🚀 Quick Start Guide
+
+### 1. Prerequisites
+- Docker & Docker Compose
+- Python 3.12+
+- Node.js 20+
+
+### 2. Backend Setup
 ```bash
+# Navigate to API directory
 cd apps/api
-pip install -r requirements.txt
-python main.py
-```
-Open `http://localhost:8000/docs` for OpenAPI interactive documentation.
 
-### 2. React Frontend (`apps/web`)
+# Install dependencies
+pip install -r requirements.txt
+
+# Run database migrations & start FastAPI app
+python main.py
+# API running at http://localhost:8000 (Swagger docs at http://localhost:8000/docs)
+```
+
+### 3. Frontend Setup
 ```bash
+# Navigate to Web app directory
 cd apps/web
+
+# Install dependencies & start dev server
 npm install
 npm run dev
+# Web app running at http://localhost:3000
 ```
-Open `http://localhost:5173`.
+
+### 4. Running via Docker Compose
+```bash
+docker-compose up --build
+```
+
+---
+
+## 🧪 Testing
+
+Run unit & integration tests using `pytest`:
+```bash
+cd apps/api
+pytest tests/ -v
+```
+
+---
+
+## 📜 API Documentation
+
+Once started, interactive API documentation is available at:
+- **Swagger UI**: `http://localhost:8000/docs`
+- **ReDoc**: `http://localhost:8000/redoc`
+
+**Primary Endpoint Sample**:
+`POST /api/v1/clinical_triage/evaluate`
+
+---
+
+## 👤 Author & Maintainer
+
+Maintained with ❤️ by **[marituMegersa](https://github.com/marituMegersa)**.
