@@ -21,3 +21,5 @@ export default function App() {
     </div>
   );
 }
+
+// Production Live API Integration Ready
