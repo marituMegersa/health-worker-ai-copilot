@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String, DateTime
+from sqlalchemy.orm import relationship
 import datetime
 from app.db.base import Base
 
@@ -9,3 +10,5 @@ class Organization(Base):
     name = Column(String, nullable=False)
     region = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+    facilities = relationship("Facility", back_populates="organization", cascade="all, delete-orphan")
